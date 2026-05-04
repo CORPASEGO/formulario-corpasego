@@ -7,24 +7,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --orange: #E8820A;
-    --orange-dark: #C46A00;
-    --orange-light: #F5A93A;
-    --orange-pale: #FFF7EC;
-    --orange-glow: rgba(232,130,10,0.15);
-    --blue: #1A4A8A;
-    --blue-dark: #0F2F5C;
-    --blue-light: #2A6CC4;
-    --blue-pale: #EEF4FF;
+    --orange: #F5A800;
+    --orange-dark: #C98A00;
+    --orange-light: #FFD04D;
+    --orange-pale: #FFFBEF;
+    --orange-glow: rgba(245,168,0,0.18);
+    --blue: #1E3A7B;
+    --blue-dark: #132860;
+    --blue-light: #2A56C6;
+    --blue-pale: #EEF3FF;
     --white: #FFFFFF;
-    --off-white: #FDFAF5;
-    --gray-50: #F9F6F0;
-    --gray-100: #F0EBE0;
-    --gray-200: #DDD5C5;
-    --gray-400: #9A8E7A;
-    --gray-600: #5C5040;
-    --gray-800: #2A2018;
-    --dark: #1A1208;
+    --off-white: #FFFDF5;
+    --gray-50: #F9F7F0;
+    --gray-100: #EEE8D5;
+    --gray-200: #DDD5B8;
+    --gray-400: #9A8E6A;
+    --gray-600: #5C5030;
+    --gray-800: #2A2010;
+    --dark: #1A1200;
     --error: #C0392B;
     --error-bg: #FFF5F5;
     --success: #1A7A4A;
@@ -48,8 +48,8 @@
     font-size: var(--font-size-base);
     line-height: 1.6;
     background-image:
-      radial-gradient(ellipse at 0% 0%, rgba(232,130,10,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 100% 100%, rgba(232,130,10,0.04) 0%, transparent 50%);
+      radial-gradient(ellipse at 0% 0%, rgba(245,168,0,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(245,168,0,0.04) 0%, transparent 50%);
   }
 
   /* ── HEADER ── */
@@ -714,13 +714,11 @@
 <!-- HEADER -->
 <header class="site-header">
   <div class="logo-box">
-    <div class="logo-emblem">🛡️</div>
-    <div class="logo-text">
-      <div class="logo-name">CORPASEGO</div>
-      <div class="logo-sub">Broker de Seguros · Cia. Ltda.</div>
-    </div>
+    <img src="https://raw.githubusercontent.com/CORPASEGO/formulario-corpasego/7e84fa9b66e1e79060516231ef2f19242266fb84/logo.PNG" alt="CORPASEGO" style="height:72px; max-width:320px; object-fit:contain;">
   </div>
-  <div class="header-tagline">Asesora Productora de Seguros</div>
+  <div class="header-tagline" style="margin-top:10px; color:var(--orange-dark); font-style:italic; font-size:0.9rem; font-weight:600; letter-spacing:0.04em; padding:0 16px;">
+    "Un seguro de vida es una carta de amor que llega en el momento que más se necesita"
+  </div>
 </header>
 
 <!-- PROGRESS -->
