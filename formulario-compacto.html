@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CORPASEGO – Solicitud Rápida Seguro de Vida</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F5A800;
+    --orange-dark: #C98A00;
+    --orange-light: #FFD04D;
+    --orange-pale: #FFFBEF;
+    --orange-glow: rgba(245,168,0,0.18);
+    --blue: #1E3A7B;
+    --blue-dark: #132860;
+    --blue-light: #2A56C6;
+    --blue-pale: #EEF3FF;
+    --white: #FFFFFF;
+    --off-white: #FFFDF5;
+    --gray-50: #F9F7F0;
+    --gray-100: #EEE8D5;
+    --gray-200: #DDD5B8;
+    --gray-400: #9A8E6A;
+    --gray-600: #5C5030;
+    --gray-800: #2A2010;
+    --dark: #1A1200;
+    --error: #C0392B;
+    --error-bg: #FFF5F5;
+    --success: #1A7A4A;
+    --success-bg: #F0FFF7;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(26,18,8,0.10);
+    --shadow-lg: 0 12px 48px rgba(26,18,8,0.18);
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    --font-size-base: 17px;
+    --font-size-label: 0.88rem;
+    --font-size-input: 1rem;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--off-white);
+    min-height: 100vh;
+    color: var(--gray-800);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    background-image:
+      radial-gradient(ellipse at 0% 0%, rgba(245,168,0,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(245,168,0,0.04) 0%, transparent 50%);
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--white);
+    border-bottom: 3px solid var(--blue);
+    padding: 18px 0;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(26,18,8,0.08);
+  }
+  .logo-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-tagline {
+    font-family: 'Merriweather', serif;
+    color: var(--gray-400);
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    background: var(--white);
+    padding: 14px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gray-100);
+    box-shadow: 0 2px 12px rgba(26,18,8,0.06);
+  }
+  .progress-steps {
+    display: flex;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .progress-steps::-webkit-scrollbar { display: none; }
+  .step-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 52px;
+    position: relative;
+  }
+  .step-dot::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: calc(50% + 13px);
+    right: calc(-50% + 13px);
+    height: 2px;
+    background: var(--gray-200);
+    z-index: 0;
+    transition: background 0.4s;
+  }
+  .step-dot:last-child::before { display: none; }
+  .step-circle {
+    width: 27px; height: 27px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    border: 2px solid var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--gray-400);
+    position: relative;
+    z-index: 1;
+    transition: var(--transition);
+  }
+  .step-dot.active .step-circle {
+    background: var(--orange);
+    border-color: var(--orange-dark);
+    color: var(--white);
+    box-shadow: 0 0 0 4px rgba(245,168,0,0.2);
+  }
+  .step-dot.done .step-circle {
+    background: var(--orange-pale);
+    border-color: var(--orange);
+    color: var(--orange-dark);
+  }
+  .step-dot.done::before { background: rgba(245,168,0,0.4); }
+  .step-label {
+    font-size: 0.56rem;
+    color: var(--gray-400);
+    margin-top: 5px;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .step-dot.active .step-label { color: var(--orange-dark); }
+  .step-dot.done .step-label { color: var(--orange); }
+  .progress-bar-line {
+    height: 4px;
+    background: var(--gray-100);
+    margin-top: 12px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange-dark), var(--orange-light));
+    transition: width 0.55s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── FORM WRAPPER ── */
+  .form-outer {
+    display: flex;
+    justify-content: center;
+    padding: 36px 16px 80px;
+  }
+  .form-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 720px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+    animation: cardIn 0.45s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange) 60%, var(--orange-light) 100%);
+    padding: 32px 44px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .section-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+  }
+  .section-number {
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .section-title {
+    font-family: 'Merriweather', serif;
+    font-size: 1.8rem;
+    color: var(--white);
+    line-height: 1.2;
+    font-weight: 900;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .section-subtitle {
+    color: rgba(255,255,255,0.88);
+    font-size: 0.95rem;
+    margin-top: 8px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .section-body { padding: 36px 44px; }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 24px; }
+  .field:last-child { margin-bottom: 0; }
+  label.field-label {
+    display: block;
+    font-size: var(--font-size-label);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  label.field-label .req { color: var(--orange); margin-left: 3px; font-size: 1rem; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: var(--font-size-input);
+    color: var(--gray-800);
+    background: var(--gray-50);
+    transition: var(--transition);
+    outline: none;
+    appearance: none;
+    font-weight: 500;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--orange);
+    background: var(--white);
+    box-shadow: 0 0 0 4px var(--orange-glow);
+  }
+  input.error, textarea.error, select.error {
+    border-color: var(--error);
+    background: var(--error-bg);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A8E7A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  .field-error {
+    font-size: 0.84rem;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+    font-weight: 600;
+  }
+  .field-error.show { display: block; }
+  .field-hint {
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  /* ── GRID ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--orange-pale);
+    border: 1.5px solid rgba(245,168,0,0.3);
+    border-left: 5px solid var(--orange);
+    border-radius: var(--radius-sm);
+    padding: 18px 22px;
+    font-size: 0.95rem;
+    color: var(--dark);
+    line-height: 1.7;
+    margin-bottom: 26px;
+    font-weight: 500;
+  }
+  .info-box ul { padding-left: 20px; margin-top: 10px; }
+  .info-box li { margin-bottom: 6px; }
+
+  /* ── SECTION DIVIDER ── */
+  .sub-section {
+    border-top: 2px solid var(--gray-100);
+    margin: 30px 0 26px;
+    padding-top: 26px;
+  }
+  .sub-section-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--orange-dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sub-section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--gray-100);
+  }
+
+  /* ── BENEFICIARIES ── */
+  .beneficiary-card {
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color var(--transition);
+  }
+  .beneficiary-card:focus-within { border-color: var(--orange); }
+  .beneficiary-header {
+    background: linear-gradient(90deg, var(--orange-dark), var(--orange));
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .beneficiary-title {
+    font-family: 'Merriweather', serif;
+    color: var(--white);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+  .btn-remove {
+    background: rgba(255,255,255,0.2);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    transition: var(--transition);
+  }
+  .btn-remove:hover { background: rgba(255,255,255,0.35); }
+  .beneficiary-body { padding: 20px 22px; }
+
+  /* ── PCT SUMMARY ── */
+  .pct-summary {
+    background: var(--gray-50);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 18px 22px;
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  .pct-label { font-size: 0.76rem; color: var(--gray-600); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .pct-value {
+    font-family: 'Merriweather', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    transition: color var(--transition);
+  }
+  .pct-value.ok { color: var(--success); }
+  .pct-value.warn { color: var(--orange); }
+  .pct-value.over { color: var(--error); }
+  .pct-right { flex: 1; min-width: 140px; }
+  .pct-bar-wrap { height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+  .pct-bar-fill { height: 100%; border-radius: 4px; transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s; }
+  .pct-bar-fill.ok { background: var(--success); }
+  .pct-bar-fill.warn { background: var(--orange); }
+  .pct-bar-fill.over { background: var(--error); }
+  .pct-msg { font-size: 0.88rem; font-weight: 600; }
+  .pct-msg.ok { color: var(--success); }
+  .pct-msg.warn { color: var(--orange-dark); }
+  .pct-msg.over { color: var(--error); }
+
+  /* ── BUTTONS ── */
+  .btn-add {
+    display: flex; align-items: center; gap: 10px;
+    background: transparent;
+    border: 2.5px dashed var(--orange);
+    color: var(--orange-dark);
+    border-radius: var(--radius-sm);
+    padding: 13px 22px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: var(--transition);
+    margin-top: 8px;
+  }
+  .btn-add:hover { background: var(--orange-pale); }
+
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 44px 32px;
+    border-top: 2px solid var(--gray-100);
+    gap: 14px;
+    background: var(--gray-50);
+  }
+  .btn-back, .btn-next, .btn-submit {
+    padding: 14px 32px;
+    border-radius: var(--radius-sm);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    letter-spacing: 0.03em;
+  }
+  .btn-back {
+    background: var(--white);
+    color: var(--gray-600);
+    border: 2px solid var(--gray-200);
+  }
+  .btn-back:hover { background: var(--gray-100); color: var(--gray-800); border-color: var(--gray-400); }
+  .btn-back:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-next, .btn-submit {
+    background: linear-gradient(135deg, var(--orange-dark) 0%, var(--orange-light) 100%);
+    color: var(--white);
+    box-shadow: 0 4px 18px rgba(245,168,0,0.35);
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+  .btn-next:hover, .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(245,168,0,0.45);
+  }
+  .btn-submit { padding: 15px 40px; }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 70px 44px 60px;
+  }
+  .success-screen.show { display: block; }
+  .success-ring {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--orange-dark), var(--orange-light));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 30px;
+    font-size: 2.4rem;
+    box-shadow: 0 8px 32px rgba(245,168,0,0.35);
+    animation: popIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-screen h2 {
+    font-family: 'Merriweather', serif;
+    color: var(--dark);
+    font-size: 2.1rem;
+    margin-bottom: 16px;
+    font-weight: 900;
+  }
+  .success-screen p { color: var(--gray-600); line-height: 1.8; font-size: 1.05rem; font-weight: 500; }
+  .success-ref {
+    display: inline-block;
+    background: var(--orange-pale);
+    border: 2px solid rgba(245,168,0,0.3);
+    border-radius: 10px;
+    padding: 12px 24px;
+    margin-top: 22px;
+    font-size: 0.92rem;
+    color: var(--dark);
+    font-weight: 700;
+  }
+
+  /* ── LOADING ── */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 56px; height: 56px;
+    border: 5px solid rgba(245,168,0,0.2);
+    border-top-color: var(--orange-light);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { color: rgba(255,255,255,0.92); font-size: 1rem; letter-spacing: 0.04em; font-weight: 600; }
+
+  /* ── RESUMEN ── */
+  .resumen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .resumen-item {
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .resumen-key { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-400); font-weight: 700; margin-bottom: 4px; }
+  .resumen-val { font-size: 0.96rem; color: var(--dark); font-weight: 600; }
+  .resumen-ben {
+    background: var(--orange-pale);
+    border: 1.5px solid rgba(245,168,0,0.25);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 14px;
+  }
+  .resumen-ben-title { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--orange-dark); font-weight: 800; margin-bottom: 12px; }
+  .ben-resumen-row { display: flex; justify-content: space-between; font-size: 0.92rem; padding: 5px 0; border-bottom: 1px solid rgba(245,168,0,0.12); font-weight: 500; }
+  .ben-resumen-row:last-child { border-bottom: none; }
+
+  @media (max-width: 500px) { .resumen-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) {
+    .section-body, .nav-buttons { padding-left: 20px; padding-right: 20px; }
+    .section-header { padding: 24px 20px 20px; }
+    .section-title { font-size: 1.5rem; }
+  }
+  .hidden { display: none !important; }
+  *:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Enviando solicitud...</p>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo-box">
+    <img src="https://raw.githubusercontent.com/CORPASEGO/formulario-corpasego/7e84fa9b66e1e79060516231ef2f19242266fb84/logo.PNG" alt="CORPASEGO" style="height:144px; max-width:640px; object-fit:contain;">
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressSteps"></div>
+  <div class="progress-bar-line">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-outer">
+  <div class="form-card" id="formCard">
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-ring">✓</div>
+      <h2>¡Solicitud enviada con éxito!</h2>
+      <p>Gracias por completar su solicitud de seguro de vida.<br>Un asesor de <strong>CORPASEGO</strong> se comunicará con usted a la brevedad.</p>
+      <div class="success-ref" id="successRef"></div>
+    </div>
+
+    <!-- ═══ STEP 0: BIENVENIDA ═══ -->
+    <div class="form-step" id="step-0">
+      <div class="section-header">
+        <div class="section-number">Bienvenido</div>
+        <div class="section-title">Un seguro de vida es una carta de amor que llega en el momento que más se necesita</div>
+        <div class="section-subtitle">Complete el siguiente formulario de manera honesta. Toda la información es estrictamente confidencial.</div>
+      </div>
+      <div class="section-body">
+        <div class="info-box">
+          <strong>Antes de comenzar, tenga en cuenta:</strong>
+          <ul>
+            <li>Este formulario tiene <strong>3 secciones</strong>. Puede regresar a corregir en cualquier momento.</li>
+            <li>Los campos con <span style="color:var(--orange)">✦</span> son obligatorios.</li>
+            <li>Los porcentajes de sus beneficiarios deben sumar exactamente <strong>100%</strong>.</li>
+            <li>La información será enviada de forma segura a CORPASEGO.</li>
+          </ul>
+        </div>
+        <div style="text-align:center;padding:10px 0 4px;">
+          <div style="font-size:0.92rem;color:var(--gray-600);font-weight:500;">Tiempo estimado de llenado: <strong style="color:var(--dark)">3–5 minutos</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1: DATOS PRINCIPALES ═══ -->
+    <div class="form-step hidden" id="step-1">
+      <div class="section-header">
+        <div class="section-number">Sección 1 de 3 · Datos del Asegurado</div>
+        <div class="section-title">Información Personal</div>
+      </div>
+      <div class="section-body">
+
+        <!-- Cédula -->
+        <div class="field">
+          <label class="field-label" for="cedula">Número de Cédula <span class="req">✦</span></label>
+          <input type="text" id="cedula" placeholder="0912345678" maxlength="10" inputmode="numeric">
+          <div class="field-error" id="err-cedula">Ingrese una cédula ecuatoriana válida (10 dígitos).</div>
+          <div class="field-hint">10 dígitos numéricos sin espacios ni guiones.</div>
+        </div>
+
+        <!-- Edad -->
+        <div class="field">
+          <label class="field-label" for="edad">Edad <span class="req">✦</span></label>
+          <input type="number" id="edad" placeholder="Ej: 35" min="18" max="75">
+          <div class="field-error" id="err-edad">Ingrese una edad válida (entre 18 y 75 años).</div>
+        </div>
+
+        <!-- Altura y Peso -->
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label" for="altura">Altura (metros) <span class="req">✦</span></label>
+            <input type="number" id="altura" placeholder="1.70" step="0.01" min="1" max="2.5">
+            <div class="field-error" id="err-altura">Ingrese una altura válida (ej: 1.70).</div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="peso">Peso (libras) <span class="req">✦</span></label>
+            <input type="number" id="peso" placeholder="154" min="44" max="660">
+            <div class="field-error" id="err-peso">Ingrese un peso válido en libras.</div>
+            <div class="field-hint">Ej: 154 lbs = 70 kg</div>
+          </div>
+        </div>
+        <div id="imcDisplay" class="hidden" style="background:var(--gray-50);border:2px solid var(--gray-200);border-radius:8px;padding:14px 18px;font-size:0.92rem;color:var(--gray-600);margin-top:-10px;margin-bottom:24px;font-weight:500;"></div>
+
+        <div class="sub-section">
+          <div class="sub-section-title">Actividad Laboral</div>
+        </div>
+
+        <!-- Profesión y Ocupación -->
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label" for="profesion">Profesión <span class="req">✦</span></label>
+            <input type="text" id="profesion" placeholder="Ej: Ingeniero Civil">
+            <div class="field-error" id="err-profesion">Ingrese su profesión.</div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="ocupacion">Ocupación <span class="req">✦</span></label>
+            <input type="text" id="ocupacion" placeholder="Ej: Gerente de Proyectos">
+            <div class="field-error" id="err-ocupacion">Ingrese su ocupación actual.</div>
+          </div>
+        </div>
+
+        <!-- RUC -->
+        <div class="field">
+          <label class="field-label" for="ruc">RUC <span class="req">✦</span></label>
+          <input type="text" id="ruc" placeholder="0912345678001" maxlength="13" inputmode="numeric">
+          <div class="field-error" id="err-ruc">Ingrese un RUC válido (13 dígitos).</div>
+          <div class="field-hint">Si no tiene RUC, ingrese su cédula seguida de 001.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: BENEFICIARIOS ═══ -->
+    <div class="form-step hidden" id="step-2">
+      <div class="section-header">
+        <div class="section-number">Sección 2 de 3 · Beneficiarios</div>
+        <div class="section-title">Beneficiarios del Seguro</div>
+        <div class="section-subtitle">El porcentaje total de todos los beneficiarios debe sumar exactamente 100%.</div>
+      </div>
+      <div class="section-body">
+        <div id="beneficiariosList"></div>
+        <button class="btn-add" onclick="addBeneficiary()">
+          <span style="font-size:1.2rem">＋</span> Agregar otro beneficiario
+        </button>
+        <div class="pct-summary" style="margin-top:22px;">
+          <div>
+            <div class="pct-label">Total asignado</div>
+            <div class="pct-value warn" id="pctValue">0%</div>
+          </div>
+          <div class="pct-right">
+            <div class="pct-bar-wrap">
+              <div class="pct-bar-fill warn" id="pctBar" style="width:0%"></div>
+            </div>
+            <div class="pct-msg warn" id="pctMsg">Agregue beneficiarios y asigne el 100%</div>
+          </div>
+        </div>
+        <div class="field-error" id="err-beneficiarios" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: CONFIRMACIÓN ═══ -->
+    <div class="form-step hidden" id="step-3">
+      <div class="section-header">
+        <div class="section-number">Sección 3 de 3 · Confirmación</div>
+        <div class="section-title">Revise y Envíe</div>
+        <div class="section-subtitle">Verifique que toda la información sea correcta antes de enviar.</div>
+      </div>
+      <div class="section-body">
+        <div id="resumenFinal"></div>
+        <div class="field" style="margin-top:22px;">
+          <label class="check-opt" id="labelAcepto" onclick="toggleAcepto()" style="display:flex;align-items:center;gap:12px;padding:13px 18px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);background:var(--gray-50);font-size:1rem;color:var(--gray-800);font-weight:500;line-height:1.4;user-select:none;">
+            <input type="checkbox" id="checkAcepto" style="width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;pointer-events:none">
+            Declaro que toda la información proporcionada es verdadera y autorizo a CORPASEGO a verificarla para los fines del seguro de vida solicitado.
+          </label>
+          <div class="field-error" id="err-acepto">Debe aceptar la declaración para continuar.</div>
+        </div>
+        <div class="field">
+          <label class="check-opt" id="labelDatos" onclick="toggleDatos()" style="display:flex;align-items:center;gap:12px;padding:13px 18px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);background:var(--gray-50);font-size:1rem;color:var(--gray-800);font-weight:500;line-height:1.4;user-select:none;">
+            <input type="checkbox" id="checkDatos" style="width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;pointer-events:none">
+            Autorizo el tratamiento de mis datos personales conforme a la política de privacidad de CORPASEGO.
+          </label>
+          <div class="field-error" id="err-datos">Debe aceptar el tratamiento de datos.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV BUTTONS -->
+    <div class="nav-buttons" id="navButtons">
+      <button class="btn-back" id="btnBack" onclick="goStep(-1)" disabled>← Anterior</button>
+      <button class="btn-next" id="btnNext" onclick="goStep(1)">Siguiente →</button>
+    </div>
+
+  </div><!-- /form-card -->
+</div><!-- /form-outer -->
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9EpiAygACbOI-SgkiTiS2AP6WZVX-cDTiBPL26Buf7Sr2WBVNORjq07Vk2mkwMFYH0Q/exec';
+
+const STEPS = [
+  { label: 'Inicio' },
+  { label: 'Datos' },
+  { label: 'Beneficiarios' },
+  { label: 'Confirmar' },
+];
+
+let currentStep = 0;
+let beneficiaryCount = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildProgress();
+  updateProgress();
+  addBeneficiary();
+  ['altura','peso'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateIMC);
+  });
+});
+
+function buildProgress() {
+  document.getElementById('progressSteps').innerHTML = STEPS.map((s, i) => `
+    <div class="step-dot ${i===0?'active':''}" id="sdot-${i}">
+      <div class="step-circle">${i+1}</div>
+      <div class="step-label">${s.label}</div>
+    </div>
+  `).join('');
+}
+
+function updateProgress() {
+  STEPS.forEach((_, i) => {
+    const d = document.getElementById(`sdot-${i}`);
+    d.className = 'step-dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+  });
+  const pct = (currentStep / (STEPS.length - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('btnBack').disabled = currentStep === 0;
+  const isLast = currentStep === STEPS.length - 1;
+  const btn = document.getElementById('btnNext');
+  btn.textContent = isLast ? '✓ Enviar Solicitud' : 'Siguiente →';
+  btn.className = isLast ? 'btn-submit' : 'btn-next';
+}
+
+function hideErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { if (msg) el.textContent = msg; el.classList.add('show'); }
+}
+function markErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('error');
+}
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('error');
+}
+
+function validateCedula(cedula) {
+  if (!/^\d{10}$/.test(cedula)) return false;
+  const prov = parseInt(cedula.substring(0, 2));
+  if (prov < 1 || prov > 24) return false;
+  const digits = cedula.split('').map(Number);
+  const verifier = digits[9];
+  const sum = digits.slice(0, 9).reduce((acc, d, i) => {
+    let val = i % 2 === 0 ? d * 2 : d;
+    if (val > 9) val -= 9;
+    return acc + val;
+  }, 0);
+  const mod = sum % 10;
+  const check = mod === 0 ? 0 : 10 - mod;
+  return check === verifier;
+}
+
+function updateIMC() {
+  const h = parseFloat(document.getElementById('altura').value);
+  const lbs = parseFloat(document.getElementById('peso').value);
+  const box = document.getElementById('imcDisplay');
+  if (h > 0.5 && lbs > 0) {
+    const kg = lbs * 0.453592;
+    const imc = kg / (h * h);
+    let cat = '', color = '';
+    if (imc < 18.5) { cat = 'Bajo peso'; color = '#E67E22'; }
+    else if (imc < 25) { cat = 'Normal'; color = 'var(--success)'; }
+    else if (imc < 30) { cat = 'Sobrepeso'; color = '#E67E22'; }
+    else { cat = 'Obesidad'; color = 'var(--error)'; }
+    box.innerHTML = `Peso en kg: <strong>${kg.toFixed(1)} kg</strong> &nbsp;·&nbsp; IMC: <strong style="color:${color}">${imc.toFixed(1)} — ${cat}</strong>`;
+    box.classList.remove('hidden');
+  } else {
+    box.classList.add('hidden');
+  }
+}
+
+function addBeneficiary() {
+  beneficiaryCount++;
+  const n = beneficiaryCount;
+  const container = document.getElementById('beneficiariosList');
+  const div = document.createElement('div');
+  div.className = 'beneficiary-card';
+  div.id = `ben-${n}`;
+  div.innerHTML = `
+    <div class="beneficiary-header">
+      <div class="beneficiary-title">Beneficiario ${n}</div>
+      ${n > 1 ? `<button class="btn-remove" onclick="removeBeneficiary(${n})">✕ Eliminar</button>` : ''}
+    </div>
+    <div class="beneficiary-body">
+      <div class="two-col">
+        <div class="field">
+          <label class="field-label">Nombres y Apellidos <span class="req">✦</span></label>
+          <input type="text" class="ben-nombre" placeholder="Nombre completo">
+        </div>
+        <div class="field">
+          <label class="field-label">Parentesco <span class="req">✦</span></label>
+          <select class="ben-parentesco">
+            <option value="">Seleccione...</option>
+            <option>Cónyuge</option><option>Hijo/a</option><option>Padre</option>
+            <option>Madre</option><option>Hermano/a</option><option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label class="field-label">Cédula <span class="req">✦</span></label>
+          <input type="text" class="ben-cedula" placeholder="0912345678" maxlength="10" inputmode="numeric">
+          <div class="field-error ben-cedula-err"></div>
+        </div>
+        <div class="field" style="max-width:100%;">
+          <label class="field-label">Porcentaje (%) <span class="req">✦</span></label>
+          <input type="number" class="ben-pct" placeholder="Ej: 50" min="1" max="100" oninput="updatePctDisplay()">
+        </div>
+      </div>
+    </div>`;
+  container.appendChild(div);
+  updatePctDisplay();
+}
+
+function removeBeneficiary(id) {
+  document.getElementById(`ben-${id}`).remove();
+  updatePctDisplay();
+}
+
+function calcTotal() {
+  let t = 0;
+  document.querySelectorAll('.ben-pct').forEach(i => {
+    const v = parseFloat(i.value);
+    if (!isNaN(v)) t += v;
+  });
+  return Math.round(t * 100) / 100;
+}
+
+function updatePctDisplay() {
+  const total = calcTotal();
+  const pctVal = document.getElementById('pctValue');
+  const pctBar = document.getElementById('pctBar');
+  const pctMsg = document.getElementById('pctMsg');
+  pctVal.textContent = total + '%';
+  pctBar.style.width = Math.min(total, 100) + '%';
+  const cls = total === 100 ? 'ok' : total > 100 ? 'over' : 'warn';
+  ['ok','warn','over'].forEach(c => {
+    pctVal.classList.toggle(c, c===cls);
+    pctBar.classList.toggle(c, c===cls);
+    pctMsg.classList.toggle(c, c===cls);
+  });
+  if (total === 100) pctMsg.textContent = '✓ ¡Perfecto! Los porcentajes suman 100%';
+  else if (total > 100) pctMsg.textContent = `Excede en ${(total-100).toFixed(2)}%. Reduzca algún porcentaje.`;
+  else pctMsg.textContent = `Faltan ${(100-total).toFixed(2)}% para completar el 100%.`;
+}
+
+function toggleAcepto() {
+  const cb = document.getElementById('checkAcepto');
+  const lbl = document.getElementById('labelAcepto');
+  cb.checked = !cb.checked;
+  lbl.style.borderColor = cb.checked ? 'var(--orange)' : '';
+  lbl.style.background = cb.checked ? 'var(--orange-pale)' : '';
+  if (cb.checked) hideErr('err-acepto');
+}
+function toggleDatos() {
+  const cb = document.getElementById('checkDatos');
+  const lbl = document.getElementById('labelDatos');
+  cb.checked = !cb.checked;
+  lbl.style.borderColor = cb.checked ? 'var(--orange)' : '';
+  lbl.style.background = cb.checked ? 'var(--orange-pale)' : '';
+  if (cb.checked) hideErr('err-datos');
+}
+
+function validateStep(step) {
+  let ok = true;
+
+  if (step === 1) {
+    // Cédula
+    const ced = document.getElementById('cedula').value.trim();
+    if (!validateCedula(ced)) { showErr('err-cedula'); markErr('cedula'); ok = false; }
+    else { hideErr('err-cedula'); clearErr('cedula'); }
+
+    // Edad
+    const edad = parseInt(document.getElementById('edad').value);
+    if (!edad || edad < 18 || edad > 75) { showErr('err-edad'); markErr('edad'); ok = false; }
+    else { hideErr('err-edad'); clearErr('edad'); }
+
+    // Altura
+    const alt = parseFloat(document.getElementById('altura').value);
+    if (!alt || alt < 1 || alt > 2.5) { showErr('err-altura'); markErr('altura'); ok = false; }
+    else { hideErr('err-altura'); clearErr('altura'); }
+
+    // Peso
+    const lbs = parseFloat(document.getElementById('peso').value);
+    if (!lbs || lbs < 44 || lbs > 660) { showErr('err-peso'); markErr('peso'); ok = false; }
+    else { hideErr('err-peso'); clearErr('peso'); }
+
+    // Profesión
+    const prof = document.getElementById('profesion').value.trim();
+    if (!prof) { showErr('err-profesion', 'Ingrese su profesión.'); markErr('profesion'); ok = false; }
+    else { hideErr('err-profesion'); clearErr('profesion'); }
+
+    // Ocupación
+    const ocup = document.getElementById('ocupacion').value.trim();
+    if (!ocup) { showErr('err-ocupacion', 'Ingrese su ocupación.'); markErr('ocupacion'); ok = false; }
+    else { hideErr('err-ocupacion'); clearErr('ocupacion'); }
+
+    // RUC
+    const ruc = document.getElementById('ruc').value.trim();
+    if (!/^\d{13}$/.test(ruc)) { showErr('err-ruc', 'Ingrese un RUC válido (13 dígitos).'); markErr('ruc'); ok = false; }
+    else { hideErr('err-ruc'); clearErr('ruc'); }
+  }
+
+  if (step === 2) {
+    const cards = document.querySelectorAll('.beneficiary-card');
+    if (cards.length === 0) { showErr('err-beneficiarios','Agregue al menos un beneficiario.'); ok = false; }
+    else {
+      const total = calcTotal();
+      if (total !== 100) { showErr('err-beneficiarios', `Los porcentajes suman ${total}%. Deben sumar exactamente 100%.`); ok = false; }
+      else hideErr('err-beneficiarios');
+      cards.forEach(card => {
+        const nombre = card.querySelector('.ben-nombre');
+        if (!nombre.value.trim()) { nombre.classList.add('error'); ok = false; } else nombre.classList.remove('error');
+        const par = card.querySelector('.ben-parentesco');
+        if (!par.value) { par.classList.add('error'); ok = false; } else par.classList.remove('error');
+        const ced = card.querySelector('.ben-cedula');
+        const cedErr = card.querySelector('.ben-cedula-err');
+        if (!validateCedula(ced.value.trim())) {
+          ced.classList.add('error'); ok = false;
+          if (cedErr) { cedErr.textContent = 'Cédula inválida (10 dígitos).'; cedErr.classList.add('show'); }
+        } else {
+          ced.classList.remove('error');
+          if (cedErr) cedErr.classList.remove('show');
+        }
+      });
+    }
+  }
+
+  if (step === 3) {
+    if (!document.getElementById('checkAcepto').checked) { showErr('err-acepto', 'Debe aceptar la declaración para continuar.'); ok = false; } else hideErr('err-acepto');
+    if (!document.getElementById('checkDatos').checked) { showErr('err-datos', 'Debe aceptar el tratamiento de datos.'); ok = false; } else hideErr('err-datos');
+  }
+
+  return ok;
+}
+
+function goStep(dir) {
+  if (dir === 1) {
+    if (currentStep === STEPS.length - 1) { submitForm(); return; }
+    if (!validateStep(currentStep)) return;
+  }
+  document.getElementById(`step-${currentStep}`).classList.add('hidden');
+  currentStep += dir;
+  document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+  if (currentStep === 3) buildResumen();
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildResumen() {
+  const lbs = document.getElementById('peso').value;
+  const kg = lbs ? (parseFloat(lbs) * 0.453592).toFixed(1) : '—';
+  const bensRows = [];
+  document.querySelectorAll('.beneficiary-card').forEach(card => {
+    const nombre = card.querySelector('.ben-nombre').value;
+    const par = card.querySelector('.ben-parentesco').value;
+    const pct = card.querySelector('.ben-pct').value;
+    bensRows.push(`<div class="ben-resumen-row"><span><strong>${nombre}</strong> · ${par}</span><span>${pct}%</span></div>`);
+  });
+  const items = [
+    { k:'Cédula',     v: document.getElementById('cedula').value },
+    { k:'Edad',       v: document.getElementById('edad').value + ' años' },
+    { k:'Altura',     v: document.getElementById('altura').value + ' m' },
+    { k:'Peso',       v: lbs + ' lbs (' + kg + ' kg)' },
+    { k:'Profesión',  v: document.getElementById('profesion').value },
+    { k:'Ocupación',  v: document.getElementById('ocupacion').value },
+    { k:'RUC',        v: document.getElementById('ruc').value },
+  ];
+  document.getElementById('resumenFinal').innerHTML = `
+    <div class="resumen-grid">
+      ${items.map(i => `<div class="resumen-item"><div class="resumen-key">${i.k}</div><div class="resumen-val">${i.v || '—'}</div></div>`).join('')}
+    </div>
+    <div class="resumen-ben">
+      <div class="resumen-ben-title">Beneficiarios</div>
+      ${bensRows.join('')}
+    </div>`;
+}
+
+async function submitForm() {
+  if (!validateStep(3)) return;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  const lbs = document.getElementById('peso').value;
+  const kg = (parseFloat(lbs) * 0.453592).toFixed(1);
+  const beneficiarios = [];
+  document.querySelectorAll('.beneficiary-card').forEach(card => {
+    beneficiarios.push({
+      nombre: card.querySelector('.ben-nombre').value,
+      parentesco: card.querySelector('.ben-parentesco').value,
+      cedula: card.querySelector('.ben-cedula').value,
+      porcentaje: card.querySelector('.ben-pct').value,
+    });
+  });
+
+  const payload = {
+    cedula: document.getElementById('cedula').value,
+    edad: document.getElementById('edad').value,
+    altura: document.getElementById('altura').value,
+    pesoLibras: lbs,
+    pesoKg: kg,
+    profesion: document.getElementById('profesion').value,
+    ocupacion: document.getElementById('ocupacion').value,
+    ruc: document.getElementById('ruc').value,
+    beneficiarios: JSON.stringify(beneficiarios),
+    timestamp: new Date().toISOString(),
+    referencia: document.getElementById('cedula').value,
+  };
+
+  try {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(payload));
+    await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+  } catch(e) {
+    console.error('Error al enviar:', e);
+  }
+
+  await new Promise(r => setTimeout(r, 1500));
+  document.getElementById('loadingOverlay').classList.remove('show');
+  document.getElementById('formCard').querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
+  document.getElementById('navButtons').classList.add('hidden');
+  document.getElementById('successRef').textContent = 'Cédula de referencia: ' + payload.referencia;
+  document.getElementById('successScreen').classList.add('show');
+  document.getElementById('progressFill').style.width = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
