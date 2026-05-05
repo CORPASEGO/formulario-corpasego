@@ -1750,7 +1750,20 @@ for (let i = 0; i < selectedFiles.length; i++) {
   formData.append('archivoTipo', selectedFiles[i].type);
 }
 
-await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+await fetch(APPS_SCRIPT_URL, { method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(response => response.text()) // 👈 IMPORTANTE
+.then(result => {
+  console.log("RESPUESTA:", result);
+  alert(result); // 👈 para verlo claro
+})
+.catch(error => {
+  console.error("ERROR:", error);
+});
 
       
                                 
