@@ -1227,7 +1227,7 @@
 
 <script>
 // ─────────────────────────────────────────────
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9EpiAygACbOI-SgkiTiS2AP6WZVX-cDTiBPL26Buf7Sr2WBVNORjq07Vk2mkwMFYH0Q/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoXkKOM7YzEhBEKVIkZQgw0GOS1xg60P0G8LCqMGyd6OW3jlHehuoxbnpCNAXhHseaCA/exec';
 // ─────────────────────────────────────────────
 
 const STEPS = [
@@ -1737,30 +1737,27 @@ async function submitForm() {
     referencia: numDoc, // número de cédula como referencia
   };
 
-  if (APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbw9EpiAygACbOI-SgkiTiS2AP6WZVX-cDTiBPL26Buf7Sr2WBVNORjq07Vk2mkwMFYH0Q/exec') {
-    try {
-      const formData = new FormData();
+  
+  try {
 
-formData.append("data",
- JSON.stringify(datos));
+const formData = new FormData();
+formData.append('data', JSON.stringify(payload));
 
-selectedFiles.forEach(file=>{
- formData.append("files",file);
-});
+for (let i = 0; i < selectedFiles.length; i++) {
+  const b64 = await fileToBase64(selectedFiles[i]);
+  formData.append('archivoData', b64);
+  formData.append('archivoNombre', selectedFiles[i].name);
+  formData.append('archivoTipo', selectedFiles[i].type);
+}
 
-fetch(APPS_SCRIPT_URL,{
- method:"POST",
- body: formData
-});
+await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
+
+      
                                 
     } catch (e) {
       console.error('Error al enviar:', e);
     }
-  } else {
-    await new Promise(r => setTimeout(r, 1800));
-    console.log('Payload (modo demo):', payload);
-  }
-
+  
   document.getElementById('loadingOverlay').classList.remove('show');
   document.getElementById('formCard').querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
   document.getElementById('navButtons').classList.add('hidden');
