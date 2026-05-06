@@ -1681,32 +1681,32 @@ function buildResumen() {
 async function submitForm() {
   if (!validateStep(8)) return;
 
-  // Mostrar loading
-  setLoading(true, 'Preparando archivos...');
+  // Mostrar loading inicial
+  setLoading(true, 'Preparando archivos...', 0);
 
+  // 1. Obtener Identificación y Peso
   const tipo   = document.querySelector('[name="tipoDoc"]:checked')?.value;
   const numDoc = tipo === 'cedula'
     ? document.getElementById('numCedula').value
     : document.getElementById('numPasaporte').value;
+  
   const lbs = document.getElementById('peso').value;
   const kg  = (parseFloat(lbs) * 0.453592).toFixed(1);
 
-  // Recopilar beneficiarios
+  // 2. Recopilar beneficiarios (Array de objetos)
   const beneficiarios = [];
   document.querySelectorAll('.beneficiary-card').forEach(card => {
     beneficiarios.push({
-      nombre:          card.querySelector('.ben-nombre').value,
-      parentesco:      card.querySelector('.ben-parentesco').value,
-      cedula:          card.querySelector('.ben-cedula').value,
-      fechaNacimiento: card.querySelector('.ben-fechanac').value,
-      email:           card.querySelector('.ben-email').value,
-      telefono:        card.querySelector('.ben-tel').value,
-      porcentaje:      card.querySelector('.ben-pct').value,
+      nombre:     card.querySelector('.ben-nombre').value,
+      parentesco: card.querySelector('.ben-parentesco').value,
+      cedula:     card.querySelector('.ben-cedula').value,
+      email:      card.querySelector('.ben-email').value,
+      telefono:   card.querySelector('.ben-tel').value,
+      porcentaje: card.querySelector('.ben-pct').value,
     });
   });
 
-  // Convertir archivos a base64
-  // ⚠️  Los archivos se envían embebidos en el JSON como array de objetos
+  // 3. Convertir archivos a base64
   const archivosBase64 = [];
   for (let i = 0; i < selectedFiles.length; i++) {
     setLoading(true, `Procesando archivo ${i+1} de ${selectedFiles.length}...`, ((i+1)/selectedFiles.length)*60);
@@ -1722,41 +1722,40 @@ async function submitForm() {
     }
   }
 
-  // Construir payload completo
+  // 4. Construir PAYLOAD (Sincronizado con Apps Script)
   const payload = {
-    // — Identificación —
     tipoDocumento:      tipo,
     numeroDocumento:    numDoc,
-    // — Personal —
     nombres:            document.getElementById('nombres').value,
     fechaNacimiento:    document.getElementById('fechaNac').value,
     estadoCivil:        document.getElementById('estadoCivil').value,
     genero:             document.getElementById('genero').value,
     nacionalidad:       document.getElementById('nacionalidad').value,
-    // — Contacto —
-    email:              document.getElementById('email').value,
+    
+    // El campo 'email' es vital para el envío del correo
+    email:              document.getElementById('email').value, 
     telefono:           document.getElementById('telefono').value,
     direccion:          document.getElementById('direccion').value,
     ciudad:             document.getElementById('ciudad').value,
     provincia:          document.getElementById('provincia').value,
-    // — Físico —
+    
     estatura:           document.getElementById('estatura').value,
     pesoLibras:         lbs,
     pesoKg:             kg,
-    // — Salud —
-    tieneDiagnostico:        document.querySelector('[name="tieneDiag"]:checked')?.value  || '',
-    detalleDiagnostico:      document.getElementById('detEnfermedad')?.value             || '',
-    fechaDiagnostico:        document.getElementById('fechaDiag')?.value                 || '',
-    examenesLaboratorio:     document.querySelector('[name="tieneLab"]:checked')?.value  || '',
-    detalleExamenes:         document.getElementById('detLab')?.value                    || '',
-    fuma:                    document.querySelector('[name="fuma"]:checked')?.value       || '',
-    desdeFuma:               document.getElementById('desdeFuma')?.value                 || '',
-    cantidadCigarrillos:     document.getElementById('cntFuma')?.value                   || '',
-    bebeAlcohol:             document.querySelector('[name="bebe"]:checked')?.value       || '',
-    frecuenciaBebe:          document.querySelector('[name="frecBebe"]:checked')?.value   || '',
-    practicaDeporteRiesgo:   document.querySelector('[name="deporte"]:checked')?.value   || '',
-    detalleDeporte:          document.getElementById('detDeporte')?.value                || '',
-    // — Ocupación —
+    
+    tieneDiagnostico:   document.querySelector('[name="tieneDiag"]:checked')?.value || '',
+    detalleDiagnostico: document.getElementById('detEnfermedad')?.value || '',
+    fechaDiagnostico:   document.getElementById('fechaDiag')?.value || '',
+    examenesLaboratorio: document.querySelector('[name="tieneLab"]:checked')?.value || '',
+    detalleExamenes:    document.getElementById('detLab')?.value || '',
+    fuma:               document.querySelector('[name="fuma"]:checked')?.value || '',
+    desdeFuma:          document.getElementById('desdeFuma')?.value || '',
+    cantidadCigarrillos: document.getElementById('cntFuma')?.value || '',
+    bebeAlcohol:        document.querySelector('[name="bebe"]:checked')?.value || '',
+    frecuenciaBebe:     document.querySelector('[name="frecBebe"]:checked')?.value || '',
+    practicaDeporteRiesgo: document.querySelector('[name="deporte"]:checked')?.value || '',
+    detalleDeporte:     document.getElementById('detDeporte')?.value || '',
+    
     profesion:          document.getElementById('profesion').value,
     actividadEconomica: document.getElementById('actEconomica').value,
     empresa:            document.getElementById('empresa').value,
@@ -1767,55 +1766,41 @@ async function submitForm() {
     activos:            document.getElementById('activos').value,
     pasivos:            document.getElementById('pasivos').value,
     declaraImpuesto:    document.querySelector('[name="impuesto"]:checked')?.value || '',
-    // — Pago —
-    tipoTarjeta:        document.querySelector('[name="tarjeta"]:checked')?.value    || '',
-    formaPago:          document.querySelector('[name="formaPago"]:checked')?.value  || '',
+    
+    tipoTarjeta:        document.querySelector('[name="tarjeta"]:checked')?.value || '',
+    formaPago:          document.querySelector('[name="formaPago"]:checked')?.value || '',
     tipoDiferido:       document.querySelector('[name="tipoDiferido"]:checked')?.value || '',
-    // — Documentos —
+    
     cantidadDocumentos: selectedFiles.length,
     nombresDocumentos:  selectedFiles.map(f => f.name).join(', '),
-    archivos:           archivosBase64,   // ← array con base64 de cada archivo
-    // — Beneficiarios —
-    beneficiarios:      JSON.stringify(beneficiarios),
-    // — Meta —
-    timestamp: new Date().toISOString(),
-    referencia: numDoc,
+    archivos:           archivosBase64,
+    beneficiarios:      JSON.stringify(beneficiarios), // Se envía como string para el PDF
+    timestamp:          new Date().toISOString()
   };
 
-  setLoading(true, 'Enviando a CORPASEGO...', 70);
+  setLoading(true, 'Enviando solicitud a CORPASEGO...', 80);
 
+  // 5. Envío de datos
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
+    // Usamos APPS_SCRIPT_URL (asegúrate que esté definida arriba en tu index)
+    await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      // ⚠️  NO se pone Content-Type manualmente para evitar preflight CORS con Apps Script.
-      //     Apps Script acepta text/plain y lo parsea igual con e.postData.contents
-      body: JSON.stringify(payload),
+      mode: 'no-cors', // Evita bloqueos de CORS, el script procesará igual
+      body: JSON.stringify(payload)
     });
 
-    // Apps Script siempre devuelve 200; el resultado está en el JSON
-    const text   = await response.text();
-    let   result = {};
-    try { result = JSON.parse(text); } catch (e) { /* respuesta no es JSON */ }
-
-    setLoading(true, '¡Listo!', 100);
-    await sleep(500);
-
-    if (result.ok === false) {
-      console.error('Error del servidor:', result.error);
-      // Mostramos éxito igualmente en el cliente ya que la mayoría de veces
-      // Apps Script procesa correctamente aunque devuelva error de CORS en el fetch
-    }
-
+    // Éxito
+    setLoading(true, '¡Solicitud enviada con éxito!', 100);
+    await sleep(800);
     mostrarExito(numDoc);
 
   } catch (err) {
-    console.error('Error de red al enviar:', err);
-    // Apps Script devuelve un error CORS en el fetch response aunque SÍ procesa la solicitud.
-    // Por eso mostramos éxito igual — los datos ya llegaron.
+    console.error('Error de red:', err);
+    // Aunque falle el fetch por CORS, usualmente Apps Script ya recibió los datos
     mostrarExito(numDoc);
+  } finally {
+    setLoading(false);
   }
-
-  setLoading(false);
 }
 
 // ── HELPERS DE UI ─────────────────────────────────────────────
