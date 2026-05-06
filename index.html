@@ -1724,6 +1724,8 @@ async function submitForm() {
 
   // 4. Construir PAYLOAD (Sincronizado con Apps Script)
   const payload = {
+    // Dentro de const payload = { ... }
+agenteEmail: "anavasquezmisho@gmail.com", // Aquí pones el correo del dueño de este link específico
     tipoDocumento:      tipo,
     numeroDocumento:    numDoc,
     nombres:            document.getElementById('nombres').value,
