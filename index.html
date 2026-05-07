@@ -213,6 +213,23 @@
     font-weight: 900;
     text-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
+
+  .beneficiarios-principal{
+  text-align: center;
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--white);
+  width: 100%;
+}
+
+@media (max-width: 560px) {
+  .beneficiarios-principal{
+    font-size: 1.5rem;
+  }
+}
   .section-subtitle {
     color: rgba(255,255,255,0.88);
     font-size: 0.95rem;
@@ -241,7 +258,6 @@
   input[type="email"],
   input[type="tel"],
   input[type="number"],
-  input[type="date"],
   textarea,
   select {
     width: 100%;
@@ -273,6 +289,33 @@
     background-position: right 16px center;
     padding-right: 40px;
     cursor: pointer;
+  }
+
+  /* CAMBIO #1: Selectores de fecha separados por día/mes/año */
+  .date-selector {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr 1.3fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .date-selector select {
+    width: 100%;
+    font-size: 1rem;
+    padding: 14px 12px;
+  }
+  .date-part-label {
+    font-size: 0.7rem;
+    color: var(--gray-400);
+    text-align: center;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 420px) {
+    .date-selector { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .date-selector select { font-size: 0.92rem; padding: 13px 6px; }
   }
 
   .field-error {
@@ -377,6 +420,34 @@
   }
 
   /* ── BENEFICIARIES ── */
+
+  /* CAMBIO #3: Título "BENEFICIARIOS" grande, centrado y destacado */
+  .beneficiarios-titulo {
+    text-align: center;
+    font-family: 'Merriweather', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--blue);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding: 18px 0 10px;
+    border-bottom: 3px solid var(--orange);
+    position: relative;
+  }
+  .beneficiarios-titulo::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--orange);
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+  @media (max-width: 560px) {
+    .beneficiarios-titulo { font-size: 1.5rem; }
+  }
+
   .beneficiary-card {
     border: 2px solid var(--gray-200);
     border-radius: var(--radius);
@@ -392,11 +463,16 @@
     align-items: center;
     justify-content: space-between;
   }
+  /* CAMBIO #4: Título "Beneficiario 1" más grande y legible en móvil */
   .beneficiary-title {
     font-family: 'Merriweather', serif;
     color: var(--white);
-    font-size: 1.05rem;
+    font-size: 1.35rem;
     font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  @media (max-width: 560px) {
+    .beneficiary-title { font-size: 1.2rem; }
   }
   .btn-remove {
     background: rgba(255,255,255,0.2);
@@ -505,6 +581,19 @@
     transition: var(--transition);
   }
   .file-remove:hover { background: var(--error-bg); }
+
+  /* CAMBIO #2: Nota de documentos opcionales */
+  .docs-optional-note {
+    background: var(--blue-pale);
+    border: 1.5px solid rgba(30,58,123,0.2);
+    border-left: 5px solid var(--blue);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 0.92rem;
+    color: var(--blue);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
 
   /* ── BUTTONS ── */
   .btn-add {
@@ -749,7 +838,7 @@
           <ul>
             <li>Este formulario tiene <strong>8 secciones</strong>. Puede regresar a corregir en cualquier momento.</li>
             <li>Los campos con <span style="color:var(--orange)">✦</span> son obligatorios.</li>
-            <li>Necesitará adjuntar documentos (cédula, planilla de servicios, RUC).</li>
+            <li>Puede adjuntar documentos (cédula, planilla de servicios, RUC) de manera opcional.</li>
             <li>Los porcentajes de sus beneficiarios deben sumar exactamente <strong>100%</strong>.</li>
             <li>La información será enviada de forma segura a CORPASEGO.</li>
           </ul>
@@ -808,9 +897,42 @@
           <div class="field-error" id="err-nombres">Ingrese sus nombres completos.</div>
         </div>
         <div class="two-col">
+          <!-- CAMBIO #1: Fecha de nacimiento con selectores separados -->
           <div class="field">
-            <label class="field-label" for="fechaNac">Fecha de Nacimiento <span class="req">✦</span></label>
-            <input type="date" id="fechaNac" max="">
+            <label class="field-label">Fecha de Nacimiento <span class="req">✦</span></label>
+            <div class="date-selector" id="fechaNacSelector">
+              <div>
+                <span class="date-part-label">Día</span>
+                <select id="fechaNacDia" onchange="actualizarFechaNac()">
+                  <option value="">--</option>
+                </select>
+              </div>
+              <div>
+                <span class="date-part-label">Mes</span>
+                <select id="fechaNacMes" onchange="actualizarDiasFechaNac();actualizarFechaNac()">
+                  <option value="">-- Mes --</option>
+                  <option value="01">Enero</option>
+                  <option value="02">Febrero</option>
+                  <option value="03">Marzo</option>
+                  <option value="04">Abril</option>
+                  <option value="05">Mayo</option>
+                  <option value="06">Junio</option>
+                  <option value="07">Julio</option>
+                  <option value="08">Agosto</option>
+                  <option value="09">Septiembre</option>
+                  <option value="10">Octubre</option>
+                  <option value="11">Noviembre</option>
+                  <option value="12">Diciembre</option>
+                </select>
+              </div>
+              <div>
+                <span class="date-part-label">Año</span>
+                <select id="fechaNacAnio" onchange="actualizarDiasFechaNac();actualizarFechaNac()">
+                  <option value="">----</option>
+                </select>
+              </div>
+            </div>
+            <input type="hidden" id="fechaNac">
             <div class="field-error" id="err-fechaNac">Ingrese una fecha de nacimiento válida.</div>
           </div>
           <div class="field">
@@ -929,9 +1051,36 @@
             <label class="field-label" for="detEnfermedad">Describa su diagnóstico <span class="req">✦</span></label>
             <textarea id="detEnfermedad" placeholder="Nombre de la enfermedad, tratamiento actual..."></textarea>
           </div>
+          <!-- CAMBIO #1: Fecha de diagnóstico con selectores -->
           <div class="field">
-            <label class="field-label" for="fechaDiag">Fecha de Diagnóstico <span class="req">✦</span></label>
-            <input type="date" id="fechaDiag">
+            <label class="field-label">Fecha de Diagnóstico <span class="req">✦</span></label>
+            <div class="date-selector">
+              <div>
+                <span class="date-part-label">Día</span>
+                <select id="fechaDiagDia" onchange="actualizarFechaDiag()">
+                  <option value="">--</option>
+                </select>
+              </div>
+              <div>
+                <span class="date-part-label">Mes</span>
+                <select id="fechaDiagMes" onchange="actualizarDiasFechaDiag();actualizarFechaDiag()">
+                  <option value="">-- Mes --</option>
+                  <option value="01">Enero</option><option value="02">Febrero</option>
+                  <option value="03">Marzo</option><option value="04">Abril</option>
+                  <option value="05">Mayo</option><option value="06">Junio</option>
+                  <option value="07">Julio</option><option value="08">Agosto</option>
+                  <option value="09">Septiembre</option><option value="10">Octubre</option>
+                  <option value="11">Noviembre</option><option value="12">Diciembre</option>
+                </select>
+              </div>
+              <div>
+                <span class="date-part-label">Año</span>
+                <select id="fechaDiagAnio" onchange="actualizarDiasFechaDiag();actualizarFechaDiag()">
+                  <option value="">----</option>
+                </select>
+              </div>
+            </div>
+            <input type="hidden" id="fechaDiag">
           </div>
         </div>
 
@@ -1011,6 +1160,7 @@
     </div>
 
     <!-- ═══ STEP 4: OCUPACIÓN ═══ -->
+    <!-- CAMBIO #5: Agregar Rol y RUC Empresa -->
     <div class="form-step hidden" id="step-4">
       <div class="section-header">
         <div class="section-number">Sección 4 de 8 · Actividad Económica</div>
@@ -1028,6 +1178,18 @@
             <input type="text" id="actEconomica" placeholder="Ej: Construcción">
             <div class="field-error" id="err-actEconomica">Ingrese su actividad económica.</div>
           </div>
+        </div>
+        <!-- CAMBIO #5: Nuevo campo Rol que desempeña -->
+        <div class="field">
+          <label class="field-label" for="rolDesempena">Rol que desempeña <span class="req">✦</span></label>
+          <input type="text" id="rolDesempena" placeholder="Ej: Gerente de Proyectos, Vendedor, Docente...">
+          <div class="field-error" id="err-rolDesempena">Ingrese el rol que desempeña.</div>
+        </div>
+        <!-- CAMBIO #5: Campo RUC renombrado a "RUC Empresa" -->
+        <div class="field">
+          <label class="field-label" for="rucEmpresa">RUC Empresa</label>
+          <input type="text" id="rucEmpresa" placeholder="Ej: 0912345678001" maxlength="13" inputmode="numeric">
+          <div class="field-hint">Ingrese el RUC de la empresa (si aplica).</div>
         </div>
         <div class="field">
           <label class="field-label" for="empresa">Nombre de la empresa <span class="req">✦</span></label>
@@ -1128,45 +1290,53 @@
     </div>
 
     <!-- ═══ STEP 6: DOCUMENTOS ═══ -->
+    <!-- CAMBIO #2: Adjuntos son opcionales, se puede avanzar sin subir -->
     <div class="form-step hidden" id="step-6">
       <div class="section-header">
         <div class="section-number">Sección 6 de 8 · Documentos</div>
         <div class="section-title">Documentos Requeridos</div>
-        <div class="section-subtitle">Adjunte los documentos necesarios para la emisión de su póliza.</div>
+        <div class="section-subtitle">Adjunte los documentos para agilizar el proceso. Este paso es opcional.</div>
       </div>
       <div class="section-body">
+        <!-- CAMBIO #2: Nota visual de que es opcional -->
+        <div class="docs-optional-note">
+          📋 Los documentos son opcionales. Puede avanzar sin adjuntarlos y enviarlos más tarde a su asesor.
+        </div>
         <div class="info-box">
-          <strong>Documentos que debe adjuntar:</strong>
+          <strong>Documentos recomendados:</strong>
           <ul>
-            <li>Cédula del asegurado <strong>(obligatorio)</strong></li>
+            <li>Cédula del asegurado</li>
             <li>Cédula del cónyuge (si aplica)</li>
-            <li>Planilla de servicio básico actual <strong>(obligatorio)</strong></li>
+            <li>Planilla de servicio básico actual</li>
             <li>RUC (si aplica)</li>
             <li>Declaración del impuesto a la renta (si aplica)</li>
           </ul>
         </div>
         <div class="field">
-          <label class="field-label">Adjuntar documentos <span class="req">✦</span></label>
+          <label class="field-label">Adjuntar documentos <span style="color:var(--gray-400);font-size:0.75rem;font-weight:500;text-transform:none;letter-spacing:0">(opcional)</span></label>
           <div class="file-drop" id="fileDrop" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
             <input type="file" id="archivos" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect(event)">
             <div class="file-drop-icon">📎</div>
             <div class="file-drop-text">Arrastra archivos aquí o <strong>haz clic para seleccionar</strong></div>
             <div class="file-drop-hint">PDF, JPG o PNG · Máximo 10 MB por archivo</div>
           </div>
-          <div class="field-error" id="err-archivos">Debe adjuntar al menos un documento.</div>
           <div class="file-list" id="fileList"></div>
         </div>
       </div>
     </div>
 
     <!-- ═══ STEP 7: BENEFICIARIOS ═══ -->
+    <!-- CAMBIO #3 y #4 -->
     <div class="form-step hidden" id="step-7">
       <div class="section-header">
         <div class="section-number">Sección 7 de 8 · Beneficiarios</div>
-        <div class="section-title">Beneficiarios del Seguro</div>
-        <div class="section-subtitle">El porcentaje total de todos los beneficiarios debe sumar exactamente 100%.</div>
+<div class="section-title beneficiarios-principal">
+  BENEFICIARIOS
+</div>        <div class="section-subtitle">El porcentaje total de todos los beneficiarios debe sumar exactamente 100%.</div>
       </div>
       <div class="section-body">
+        <!-- CAMBIO #3: Título "BENEFICIARIOS" centrado, grande y destacado -->
+
         <div id="beneficiariosList"></div>
         <button class="btn-add" onclick="addBeneficiary()">
           <span style="font-size:1.2rem">＋</span> Agregar otro beneficiario
@@ -1244,11 +1414,106 @@ let currentStep      = 0;
 let beneficiaryCount = 0;
 let selectedFiles    = [];
 
+// ── CAMBIO #1: Funciones para selectores de fecha ────────────
+function llenarDias(selectId, mes, anio) {
+  const sel = document.getElementById(selectId);
+  const valorActual = sel.value;
+  sel.innerHTML = '<option value="">--</option>';
+  let diasMax = 31;
+  if (mes) {
+    const m = parseInt(mes);
+    const y = anio ? parseInt(anio) : 2000;
+    diasMax = new Date(y, m, 0).getDate();
+  }
+  for (let d = 1; d <= diasMax; d++) {
+    const opt = document.createElement('option');
+    opt.value = String(d).padStart(2, '0');
+    opt.textContent = d;
+    if (opt.value === valorActual) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function llenarAniosPasados(selectId, desde, hasta) {
+  const sel = document.getElementById(selectId);
+  const valorActual = sel.value;
+  sel.innerHTML = '<option value="">----</option>';
+  for (let y = hasta; y >= desde; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    if (String(y) === String(valorActual)) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function actualizarDiasFechaNac() {
+  const mes  = document.getElementById('fechaNacMes').value;
+  const anio = document.getElementById('fechaNacAnio').value;
+  llenarDias('fechaNacDia', mes, anio);
+}
+function actualizarFechaNac() {
+  const d = document.getElementById('fechaNacDia').value;
+  const m = document.getElementById('fechaNacMes').value;
+  const y = document.getElementById('fechaNacAnio').value;
+  document.getElementById('fechaNac').value = (d && m && y) ? `${y}-${m}-${d}` : '';
+  if (d && m && y) hideErr('err-fechaNac');
+}
+
+function actualizarDiasFechaDiag() {
+  const mes  = document.getElementById('fechaDiagMes').value;
+  const anio = document.getElementById('fechaDiagAnio').value;
+  llenarDias('fechaDiagDia', mes, anio);
+}
+function actualizarFechaDiag() {
+  const d = document.getElementById('fechaDiagDia').value;
+  const m = document.getElementById('fechaDiagMes').value;
+  const y = document.getElementById('fechaDiagAnio').value;
+  document.getElementById('fechaDiag').value = (d && m && y) ? `${y}-${m}-${d}` : '';
+}
+
+// ── CAMBIO #1: Fechas en beneficiarios ────────────────────────
+function llenarSelectorFechaBen(card, n) {
+  const diaId  = `benFechaDia_${n}`;
+  const mesId  = `benFechaMes_${n}`;
+  const anioId = `benFechaAnio_${n}`;
+  const hidId  = `benFechaNac_${n}`;
+
+  llenarDias(diaId, '', '');
+  llenarAniosPasados(anioId, 1920, new Date().getFullYear());
+
+  card.querySelector(`#${mesId}`).addEventListener('change', () => {
+    llenarDias(diaId, card.querySelector(`#${mesId}`).value, card.querySelector(`#${anioId}`).value);
+    actualizarFechaBen(n);
+  });
+  card.querySelector(`#${anioId}`).addEventListener('change', () => {
+    llenarDias(diaId, card.querySelector(`#${mesId}`).value, card.querySelector(`#${anioId}`).value);
+    actualizarFechaBen(n);
+  });
+  card.querySelector(`#${diaId}`).addEventListener('change', () => actualizarFechaBen(n));
+}
+
+function actualizarFechaBen(n) {
+  const d = document.getElementById(`benFechaDia_${n}`)?.value;
+  const m = document.getElementById(`benFechaMes_${n}`)?.value;
+  const y = document.getElementById(`benFechaAnio_${n}`)?.value;
+  const hid = document.getElementById(`benFechaNac_${n}`);
+  if (hid) hid.value = (d && m && y) ? `${y}-${m}-${d}` : '';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   buildProgress();
   updateProgress();
   addBeneficiary();
-  document.getElementById('fechaNac').max = new Date().toISOString().split('T')[0];
+
+  // Inicializar selectores de fecha de nacimiento principal
+  llenarDias('fechaNacDia', '', '');
+  llenarAniosPasados('fechaNacAnio', 1920, new Date().getFullYear());
+
+  // Inicializar selectores fecha de diagnóstico
+  llenarDias('fechaDiagDia', '', '');
+  llenarAniosPasados('fechaDiagAnio', 1920, new Date().getFullYear());
+
   ['estatura','peso'].forEach(id => {
     document.getElementById(id).addEventListener('input', updateIMC);
   });
@@ -1362,7 +1627,6 @@ function processFiles(files) {
     if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) selectedFiles.push(f);
   });
   renderFileList();
-  if (selectedFiles.length > 0) hideErr('err-archivos');
 }
 function removeFile(idx) { selectedFiles.splice(idx, 1); renderFileList(); }
 function renderFileList() {
@@ -1383,12 +1647,10 @@ function renderFileList() {
 }
 
 // ── CONVERSIÓN A BASE64 ───────────────────────────────────────
-// ⚠️  Esta función faltaba completamente en el código original
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload  = () => {
-      // Quitar el prefijo "data:...;base64," y devolver solo el base64 puro
       const base64 = reader.result.split(',')[1];
       resolve(base64);
     };
@@ -1405,6 +1667,7 @@ function addBeneficiary() {
   const div       = document.createElement('div');
   div.className   = 'beneficiary-card';
   div.id          = `ben-${n}`;
+  // CAMBIO #4: título más grande en beneficiary-title (manejado via CSS)
   div.innerHTML   = `
     <div class="beneficiary-header">
       <div class="beneficiary-title">Beneficiario ${n}</div>
@@ -1433,7 +1696,30 @@ function addBeneficiary() {
         </div>
         <div class="field">
           <label class="field-label">Fecha de Nacimiento <span class="req">✦</span></label>
-          <input type="date" class="ben-fechanac">
+          <div class="date-selector">
+            <div>
+              <span class="date-part-label">Día</span>
+              <select id="benFechaDia_${n}"><option value="">--</option></select>
+            </div>
+            <div>
+              <span class="date-part-label">Mes</span>
+              <select id="benFechaMes_${n}">
+                <option value="">-- Mes --</option>
+                <option value="01">Enero</option><option value="02">Febrero</option>
+                <option value="03">Marzo</option><option value="04">Abril</option>
+                <option value="05">Mayo</option><option value="06">Junio</option>
+                <option value="07">Julio</option><option value="08">Agosto</option>
+                <option value="09">Septiembre</option><option value="10">Octubre</option>
+                <option value="11">Noviembre</option><option value="12">Diciembre</option>
+              </select>
+            </div>
+            <div>
+              <span class="date-part-label">Año</span>
+              <select id="benFechaAnio_${n}"><option value="">----</option></select>
+            </div>
+          </div>
+          <input type="hidden" id="benFechaNac_${n}" class="ben-fechanac">
+          <div class="field-error ben-fechanac-err"></div>
         </div>
       </div>
       <div class="two-col">
@@ -1454,6 +1740,8 @@ function addBeneficiary() {
       </div>
     </div>`;
   container.appendChild(div);
+  // CAMBIO #1: Inicializar selectores de fecha para este beneficiario
+  llenarSelectorFechaBen(div, n);
   updatePctDisplay();
 }
 
@@ -1524,7 +1812,7 @@ function validateStep(step) {
   }
 
   if (step === 2) {
-    ['nombres','fechaNac','telefono','direccion','ciudad','nacionalidad'].forEach(id => {
+    ['nombres','telefono','direccion','ciudad','nacionalidad'].forEach(id => {
       const v = document.getElementById(id).value.trim();
       if (!v) { showErr('err-'+id); markErr(id); ok = false; }
       else    { hideErr('err-'+id); clearErr(id); }
@@ -1535,6 +1823,10 @@ function validateStep(step) {
     if (!document.getElementById('estadoCivil').value) { showErr('err-estadoCivil'); ok = false; } else hideErr('err-estadoCivil');
     if (!document.getElementById('genero').value)      { showErr('err-genero');      ok = false; } else hideErr('err-genero');
     if (!document.getElementById('provincia').value)   { showErr('err-provincia');   ok = false; } else hideErr('err-provincia');
+    // CAMBIO #1: Validar fecha de nacimiento por selectores
+    const fechaNacVal = document.getElementById('fechaNac').value;
+    if (!fechaNacVal) { showErr('err-fechaNac','Seleccione día, mes y año de nacimiento.'); ok = false; }
+    else { hideErr('err-fechaNac'); }
     const est = parseFloat(document.getElementById('estatura').value);
     if (!est || est < 1 || est > 2.5) { showErr('err-estatura','Ingrese una estatura válida (ej: 1.70).'); markErr('estatura'); ok = false; }
     else { hideErr('err-estatura'); clearErr('estatura'); }
@@ -1551,7 +1843,8 @@ function validateStep(step) {
   }
 
   if (step === 4) {
-    ['profesion','actEconomica','empresa','dirEmpresa'].forEach(id => {
+    // CAMBIO #5: Se agrega validación de rolDesempena
+    ['profesion','actEconomica','rolDesempena','empresa','dirEmpresa'].forEach(id => {
       const v = document.getElementById(id).value.trim();
       if (!v) { showErr('err-'+id); markErr(id); ok = false; }
       else    { hideErr('err-'+id); clearErr(id); }
@@ -1569,10 +1862,8 @@ function validateStep(step) {
     if (!document.querySelector('[name="formaPago"]:checked')) { showErr('err-formaPago'); ok = false; } else hideErr('err-formaPago');
   }
 
-  if (step === 6) {
-    if (selectedFiles.length === 0) { showErr('err-archivos','Debe adjuntar al menos un documento.'); ok = false; }
-    else hideErr('err-archivos');
-  }
+  // CAMBIO #2: Step 6 (Docs) es totalmente opcional — sin validación
+  // if (step === 6) { ... } — eliminado
 
   if (step === 7) {
     const cards = document.querySelectorAll('.beneficiary-card');
@@ -1661,11 +1952,12 @@ function buildResumen() {
     { k:'Ciudad',       v: document.getElementById('ciudad').value + ', ' + document.getElementById('provincia').value },
     { k:'Peso',         v: lbs + ' lbs (' + (parseFloat(lbs)*0.453592).toFixed(1) + ' kg)' },
     { k:'Profesión',    v: document.getElementById('profesion').value },
+    { k:'Rol',          v: document.getElementById('rolDesempena').value },
     { k:'Empresa',      v: document.getElementById('empresa').value },
     { k:'Ingresos/mes', v: '$' + document.getElementById('ingresos').value },
     { k:'Tarjeta',      v: (document.querySelector('[name="tarjeta"]:checked')?.value || '—').toUpperCase() },
     { k:'Forma pago',   v: document.querySelector('[name="formaPago"]:checked')?.value || '—' },
-    { k:'Documentos',   v: selectedFiles.length + ' archivo(s) adjunto(s)' },
+    { k:'Documentos',   v: selectedFiles.length ? selectedFiles.length + ' archivo(s) adjunto(s)' : 'Sin adjuntos' },
   ];
   document.getElementById('resumenFinal').innerHTML = `
     <div class="resumen-grid">
@@ -1681,10 +1973,8 @@ function buildResumen() {
 async function submitForm() {
   if (!validateStep(8)) return;
 
-  // Mostrar loading inicial
   setLoading(true, 'Preparando archivos...', 0);
 
-  // 1. Obtener Identificación y Peso
   const tipo   = document.querySelector('[name="tipoDoc"]:checked')?.value;
   const numDoc = tipo === 'cedula'
     ? document.getElementById('numCedula').value
@@ -1693,7 +1983,6 @@ async function submitForm() {
   const lbs = document.getElementById('peso').value;
   const kg  = (parseFloat(lbs) * 0.453592).toFixed(1);
 
-  // 2. Recopilar beneficiarios (Array de objetos)
   const beneficiarios = [];
   document.querySelectorAll('.beneficiary-card').forEach(card => {
     beneficiarios.push({
@@ -1702,11 +1991,11 @@ async function submitForm() {
       cedula:     card.querySelector('.ben-cedula').value,
       email:      card.querySelector('.ben-email').value,
       telefono:   card.querySelector('.ben-tel').value,
+      fechaNac:   card.querySelector('.ben-fechanac')?.value || '',
       porcentaje: card.querySelector('.ben-pct').value,
     });
   });
 
-  // 3. Convertir archivos a base64
   const archivosBase64 = [];
   for (let i = 0; i < selectedFiles.length; i++) {
     setLoading(true, `Procesando archivo ${i+1} de ${selectedFiles.length}...`, ((i+1)/selectedFiles.length)*60);
@@ -1722,10 +2011,9 @@ async function submitForm() {
     }
   }
 
-  // 4. Construir PAYLOAD (Sincronizado con Apps Script)
   const payload = {
-    // Dentro de const payload = { ... }
-agenteEmail: "anavasquezmisho@gmail.com", // Aquí pones el correo del dueño de este link específico
+    // CAMBIO #8: correo del agente incluido en payload
+    agenteEmail:        'anavasquezmisho@gmail.com',
     tipoDocumento:      tipo,
     numeroDocumento:    numDoc,
     nombres:            document.getElementById('nombres').value,
@@ -1733,18 +2021,14 @@ agenteEmail: "anavasquezmisho@gmail.com", // Aquí pones el correo del dueño de
     estadoCivil:        document.getElementById('estadoCivil').value,
     genero:             document.getElementById('genero').value,
     nacionalidad:       document.getElementById('nacionalidad').value,
-    
-    // El campo 'email' es vital para el envío del correo
     email:              document.getElementById('email').value, 
     telefono:           document.getElementById('telefono').value,
     direccion:          document.getElementById('direccion').value,
     ciudad:             document.getElementById('ciudad').value,
     provincia:          document.getElementById('provincia').value,
-    
     estatura:           document.getElementById('estatura').value,
     pesoLibras:         lbs,
     pesoKg:             kg,
-    
     tieneDiagnostico:   document.querySelector('[name="tieneDiag"]:checked')?.value || '',
     detalleDiagnostico: document.getElementById('detEnfermedad')?.value || '',
     fechaDiagnostico:   document.getElementById('fechaDiag')?.value || '',
@@ -1757,9 +2041,11 @@ agenteEmail: "anavasquezmisho@gmail.com", // Aquí pones el correo del dueño de
     frecuenciaBebe:     document.querySelector('[name="frecBebe"]:checked')?.value || '',
     practicaDeporteRiesgo: document.querySelector('[name="deporte"]:checked')?.value || '',
     detalleDeporte:     document.getElementById('detDeporte')?.value || '',
-    
     profesion:          document.getElementById('profesion').value,
     actividadEconomica: document.getElementById('actEconomica').value,
+    // CAMBIO #5: Nuevos campos
+    rolDesempena:       document.getElementById('rolDesempena').value,
+    rucEmpresa:         document.getElementById('rucEmpresa').value,
     empresa:            document.getElementById('empresa').value,
     telefonoEmpresa:    document.getElementById('telEmpresa').value,
     direccionEmpresa:   document.getElementById('dirEmpresa').value,
@@ -1768,37 +2054,29 @@ agenteEmail: "anavasquezmisho@gmail.com", // Aquí pones el correo del dueño de
     activos:            document.getElementById('activos').value,
     pasivos:            document.getElementById('pasivos').value,
     declaraImpuesto:    document.querySelector('[name="impuesto"]:checked')?.value || '',
-    
     tipoTarjeta:        document.querySelector('[name="tarjeta"]:checked')?.value || '',
     formaPago:          document.querySelector('[name="formaPago"]:checked')?.value || '',
     tipoDiferido:       document.querySelector('[name="tipoDiferido"]:checked')?.value || '',
-    
     cantidadDocumentos: selectedFiles.length,
     nombresDocumentos:  selectedFiles.map(f => f.name).join(', '),
     archivos:           archivosBase64,
-    beneficiarios:      JSON.stringify(beneficiarios), // Se envía como string para el PDF
+    beneficiarios:      JSON.stringify(beneficiarios),
     timestamp:          new Date().toISOString()
   };
 
   setLoading(true, 'Enviando solicitud a CORPASEGO...', 80);
 
-  // 5. Envío de datos
   try {
-    // Usamos APPS_SCRIPT_URL (asegúrate que esté definida arriba en tu index)
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors', // Evita bloqueos de CORS, el script procesará igual
+      mode: 'no-cors',
       body: JSON.stringify(payload)
     });
-
-    // Éxito
     setLoading(true, '¡Solicitud enviada con éxito!', 100);
     await sleep(800);
     mostrarExito(numDoc);
-
   } catch (err) {
     console.error('Error de red:', err);
-    // Aunque falle el fetch por CORS, usualmente Apps Script ya recibió los datos
     mostrarExito(numDoc);
   } finally {
     setLoading(false);
